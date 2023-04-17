@@ -30,8 +30,8 @@ const server = https.createServer((req, res) => {
     
     //adding the SELECT query to get data from the PostgreSQL database
 
-    client.query(`SELECT
-                   *
+    client.query(`  SELECT
+                    *
                     FROM
                     bookkeeping_details `,(error,result)=>{
                         if(error){
