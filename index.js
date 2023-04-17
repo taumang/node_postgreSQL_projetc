@@ -1,3 +1,4 @@
+const { error } = require('console');
 const https = require('https');
 const { Client } = require('pg');
 
@@ -26,7 +27,19 @@ client.connect((err) => {
 const server = https.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
-    res.end('We are live!');
+    
+    //adding the SELECT query to get data from the PostgreSQL database
+
+    client.query(`SELECT
+                   *
+                    FROM
+                    bookkeeping_details `,(error,result)=>{
+                        if(error){
+                            console.error('Error running SELECT query',error.stack);
+                        }else{
+                            res.end(JSON.stringify(result.rows));
+                        }
+                    });
 });
 
 // Start the server
