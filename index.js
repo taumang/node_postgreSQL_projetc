@@ -1,8 +1,6 @@
 const https = require('https');
 const { Client } = require('pg');
 
-// Define the port number
-const port = 3000;
 
 // Create a new PostgreSQL client
 const client = new Client({
@@ -37,16 +35,18 @@ const server = https.createServer((req, res) => {
         RETURNING id`,
         values: ['My Business', 100000.00, 75000.00, 25000.00, new Date()]
     };
-
+    
     client.query(query,(error,result)=>{
-                        if(error)
-                            console.error('Error running INSERT query', error.stack);
-                        else
-                            res.end(`New record created with ID: ${result.rows[0].id}`);
-                        
-                    });
+        if(error)
+        console.error('Error running INSERT query', error.stack);
+        else
+        res.end(`New record created with ID: ${result.rows[0].id}`);
+        
+    });
 });
 
+// Define the port number
+const port = 3000;
 // Start the server
 server.listen(port, () => {
     console.log(`Server running at https://localhost:${port}/`);
