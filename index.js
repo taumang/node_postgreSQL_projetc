@@ -1,4 +1,3 @@
-const { error } = require('console');
 const https = require('https');
 const { Client } = require('pg');
 
@@ -16,11 +15,11 @@ const client = new Client({
 
 // Connect to the PostgreSQL server
 client.connect((err) => {
-    if (err) {
+    if (err) 
         console.error('Error connecting to PostgreSQL server', err.stack);
-    } else {
+     else 
         console.log('Connected to PostgreSQL server');
-    }
+    
 });
 
 // Create a server object
@@ -28,17 +27,23 @@ const server = https.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
     
-    //adding the SELECT query to get data from the PostgreSQL database
+    //adding INSERT query to add a new record to the PostgreSQL database
+    const query = {
+        text: `
+        INSERT 
+        INTO bookkeeping_info 
+        (business_name, revenue, expenses, profit, created_at) 
+        VALUES ($1, $2, $3, $4, $5) 
+        RETURNING id`,
+        values: ['My Business', 100000.00, 75000.00, 25000.00, new Date()]
+    };
 
-    client.query(`  SELECT
-                    *
-                    FROM
-                    bookkeeping_details `,(error,result)=>{
-                        if(error){
-                            console.error('Error running SELECT query',error.stack);
-                        }else{
-                            res.end(JSON.stringify(result.rows));
-                        }
+    client.query(query,(error,result)=>{
+                        if(error)
+                            console.error('Error running INSERT query', error.stack);
+                        else
+                            res.end(`New record created with ID: ${result.rows[0].id}`);
+                        
                     });
 });
 
